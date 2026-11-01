@@ -45,3 +45,4 @@ jobs:
           java -ea -Djava.awt.headless=true -cp "out:src" TrapEventsTest
           java -ea -Djava.awt.headless=true -cp "out:src" TrapPlacementTest
           java -ea -Djava.awt.headless=true -cp "out:src" ExperimentTest
+          java -ea -Djava.awt.headless=true -cp "out:src" RaceConditionDemoTest
