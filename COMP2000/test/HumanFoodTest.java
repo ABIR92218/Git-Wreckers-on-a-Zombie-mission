@@ -17,7 +17,18 @@ public final class HumanFoodTest {
         testFoodStrategiesPickDifferentFood();
         testHumanFoodStatisticsCollectors();
         testParallelStatisticsMatchSequential();
+        testRandomStrategyProducesVariety();
         System.out.println("HumanFoodTest passed");
+    }
+
+    /** World/Main rely on this producing a genuine mix, not always the same strategy. */
+    private static void testRandomStrategyProducesVariety() {
+        java.util.Random random = new java.util.Random(7);
+        java.util.Set<Class<?>> seen = new java.util.HashSet<>();
+        for (int i = 0; i < 20; i++) {
+            seen.add(FoodSelectionStrategy.random(random).getClass());
+        }
+        assert seen.size() > 1;
     }
 
     /** Parallel and sequential aggregation should agree on the same data. */

@@ -178,7 +178,8 @@ public class World {
 
         if (tick % HUMAN_SPAWN_INTERVAL_TICKS == 0) {
             addEntity(new Human(random.nextDouble() * width,
-                    random.nextDouble() * height));
+                    random.nextDouble() * height,
+                    FoodSelectionStrategy.random(random)));
         }
 
         if (tick % ZOMBIE_SPAWN_INTERVAL_TICKS == 0) {

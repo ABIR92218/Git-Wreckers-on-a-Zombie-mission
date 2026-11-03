@@ -156,11 +156,14 @@ public class Main {
             world.addEntity(Trap.nearEntrance(world, building, random, TRAP_USES));
         }
 
-        // Vary initial encounters without changing the population sizes.
+        // Vary initial encounters without changing the population sizes. Each
+        // human gets a random food-seeking strategy so the starting
+        // population already shows a mix of behaviours, not just the default.
         for (int index = 0; index < 3; index++) {
             world.addEntity(new Human(
                     randomCoordinate(random, world.getWidth(), AGENT_SPAWN_MARGIN),
-                    randomCoordinate(random, world.getHeight(), AGENT_SPAWN_MARGIN)));
+                    randomCoordinate(random, world.getHeight(), AGENT_SPAWN_MARGIN),
+                    FoodSelectionStrategy.random(random)));
         }
 
         world.addEntity(new Food(250, 300, 45));
