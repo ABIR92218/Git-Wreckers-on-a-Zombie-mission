@@ -3,6 +3,30 @@ public final class HumanFoodTest {
     private HumanFoodTest() {
     }
 
+    /**
+     * A non-Entity Edible: nothing to walk towards, no position, no sprite -
+     * proof that Edible's "future item that isn't an Entity" claim is real,
+     * not just a comment (see testEatDirectlyWorksForNonFoodEdible below).
+     */
+    private static final class CarePackage implements Edible {
+        private boolean consumed;
+
+        @Override
+        public double getEnergyValue() {
+            return 40;
+        }
+
+        @Override
+        public boolean isConsumed() {
+            return consumed;
+        }
+
+        @Override
+        public void consume() {
+            consumed = true;
+        }
+    }
+
     public static void main(String[] args) {
         testEnergyDecreasesAfterUpdate();
         testInvalidFoodEnergyIsRejected();
@@ -17,6 +41,7 @@ public final class HumanFoodTest {
         testFoodStrategiesPickDifferentFood();
         testHumanFoodStatisticsCollectors();
         testAverageEnergyByStrategy();
+        testEatDirectlyWorksForNonFoodEdible();
         testParallelStatisticsMatchSequential();
         testRandomStrategyProducesVariety();
         System.out.println("HumanFoodTest passed");
@@ -129,6 +154,21 @@ public final class HumanFoodTest {
         food.consume();
         assert food.isConsumed();
         assert food.describeEnergy().equals("already consumed");
+    }
+
+    /**
+     * eatDirectly works for a non-Entity, non-Food Edible, with no distance
+     * check and no position - the thing Human.eat(Food) alone could never do.
+     */
+    private static void testEatDirectlyWorksForNonFoodEdible() {
+        Human human = new Human(0, 0);
+        double energyBeforeEating = human.getEnergy();
+        CarePackage carePackage = new CarePackage();
+
+        assert human.eatDirectly(carePackage);
+        assert human.getEnergy() >= energyBeforeEating;
+        assert carePackage.isConsumed();
+        assert !human.eatDirectly(carePackage); // already consumed
     }
 
     private static void testEnergyDecreasesAfterUpdate() {

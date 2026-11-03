@@ -230,8 +230,24 @@ public class Human extends Entity {
             return false;
         }
 
-        energy = Math.min(MAX_ENERGY, energy + food.getEnergyValue());
-        food.consume();
+        return eatDirectly(food);
+    }
+
+    /**
+     * Consumes any {@link Edible} directly, with no distance check. This is
+     * what makes Edible a genuinely separate contract from Food: a future
+     * item that is not an {@link Entity} at all - say, a care package handed
+     * straight to a human by a medic, with nothing to walk towards - could
+     * be eaten this way without ever needing a position in the world.
+     * {@link #eat(Food)} is simply this plus a proximity check.
+     */
+    public boolean eatDirectly(Edible edible) {
+        if (edible == null || edible.isConsumed()) {
+            return false;
+        }
+
+        energy = Math.min(MAX_ENERGY, energy + edible.getEnergyValue());
+        edible.consume();
         return true;
     }
 
