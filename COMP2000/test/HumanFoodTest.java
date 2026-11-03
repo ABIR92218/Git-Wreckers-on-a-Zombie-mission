@@ -16,7 +16,21 @@ public final class HumanFoodTest {
         testFoodConstructorOverloadUsesDefaultEnergy();
         testFoodStrategiesPickDifferentFood();
         testHumanFoodStatisticsCollectors();
+        testParallelStatisticsMatchSequential();
         System.out.println("HumanFoodTest passed");
+    }
+
+    /** Parallel and sequential aggregation should agree on the same data. */
+    private static void testParallelStatisticsMatchSequential() {
+        java.util.List<Human> humans =
+                java.util.List.of(new Human(100, 100), new Human(500, 500), new Human(800, 200));
+        double sequentialAverage = HumanFoodStatistics.summarizeEnergy(humans).getAverage();
+        assert HumanFoodStatistics.averageEnergyParallel(humans) == sequentialAverage;
+
+        java.util.List<Food> food =
+                java.util.List.of(new Food(0, 0, 10), new Food(0, 0, 5), new Food(400, 400, 20));
+        assert HumanFoodStatistics.countByFoodTypeParallel(food)
+                .equals(HumanFoodStatistics.countByFoodType(food));
     }
 
     /** Week 11 collectors: groupingBy, partitioningBy, summarizingDouble, mapping. */

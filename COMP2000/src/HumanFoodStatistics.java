@@ -53,4 +53,29 @@ public final class HumanFoodStatistics {
                         Collectors.mapping(human -> Integer.toHexString(human.hashCode()),
                                 Collectors.toList())));
     }
+
+    /**
+     * Average energy across a (potentially large) population, computed with
+     * a parallel stream. Safe because {@code average()} reduces each chunk
+     * separately and combines the results - no shared mutable state.
+     */
+    public static double averageEnergyParallel(List<Human> humans) {
+        return humans.parallelStream()
+                .mapToDouble(Human::getEnergy)
+                .average()
+                .orElse(0.0);
+    }
+
+    /**
+     * Per-type food counts computed with a parallel stream. Uses
+     * groupingByConcurrent rather than plain groupingBy, so every thread
+     * inserts straight into one shared ConcurrentHashMap instead of each
+     * thread building its own private map to be merged afterwards - the
+     * "ALSO RIGHT" thread-safe-totals-per-category approach from the course,
+     * as opposed to the race-condition-prone plain HashMap + forEach version.
+     */
+    public static Map<FoodType, Long> countByFoodTypeParallel(List<Food> food) {
+        return food.parallelStream()
+                .collect(Collectors.groupingByConcurrent(Food::getType, Collectors.counting()));
+    }
 }
