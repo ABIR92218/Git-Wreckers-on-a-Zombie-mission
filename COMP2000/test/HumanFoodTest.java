@@ -15,7 +15,35 @@ public final class HumanFoodTest {
         testFoodIsEdible();
         testFoodConstructorOverloadUsesDefaultEnergy();
         testFoodStrategiesPickDifferentFood();
+        testHumanFoodStatisticsCollectors();
         System.out.println("HumanFoodTest passed");
+    }
+
+    /** Week 11 collectors: groupingBy, partitioningBy, summarizingDouble, mapping. */
+    private static void testHumanFoodStatisticsCollectors() {
+        Human sheltered = new Human(120, 140);
+        Human outInTheOpen = new Human(500, 500);
+        Building building = new Building(100, 100, 40, 40, 1);
+        assert sheltered.enterBuilding(building);
+        java.util.List<Human> humans = java.util.List.of(sheltered, outInTheOpen);
+
+        java.util.Map<Boolean, Long> byShelter = HumanFoodStatistics.countByShelterStatus(humans);
+        assert byShelter.get(true) == 1;
+        assert byShelter.get(false) == 1;
+
+        java.util.DoubleSummaryStatistics energyStats =
+                HumanFoodStatistics.summarizeEnergy(humans);
+        assert energyStats.getCount() == 2;
+
+        Food apple = new Food(0, 0, 10);
+        Food sameTypeApple = new Food(0, 0, 15);
+        java.util.List<Food> food = java.util.List.of(apple, sameTypeApple);
+        java.util.Map<FoodType, Long> byType = HumanFoodStatistics.countByFoodType(food);
+        assert byType.get(apple.getType()) == 2;
+
+        java.util.Map<FoodType, Double> energyByType =
+                HumanFoodStatistics.totalEnergyByFoodType(food);
+        assert energyByType.get(apple.getType()) == 25.0;
     }
 
     /**

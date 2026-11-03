@@ -20,6 +20,7 @@ public class Food extends Entity implements Edible {
     // Food expires after 300 simulation updates.
     private static final int LIFETIME_TICKS = 300;
     private final double energyValue;
+    private final FoodType type;
     private final Image image;
     private int ageInTicks;
 
@@ -34,7 +35,13 @@ public class Food extends Entity implements Edible {
             throw new IllegalArgumentException("Food energy must be positive");
         }
         this.energyValue = energyValue;
-        this.image = loadImage(selectImagePath(x, y));
+        this.type = FoodType.fromPosition(x, y);
+        this.image = loadImage(type.getSpritePath());
+    }
+
+    /** What kind of food this is, used both for its sprite and for statistics (see HumanFoodStatistics). */
+    public FoodType getType() {
+        return type;
     }
 
     @Override
@@ -67,17 +74,6 @@ public class Food extends Entity implements Edible {
         int left = (int) getX() - FOOD_SIZE / 2;
         int top = (int) getY() - FOOD_SIZE / 2;
         graphics.drawImage(image, left, top, FOOD_SIZE, FOOD_SIZE, null);
-    }
-
-    private String selectImagePath(double x, double y) {
-        int selection = Math.floorMod((int) Math.round(x * 31 + y * 17), 3);
-        if (selection == 0) {
-            return "/HumanFoodAssets/FoodApple.png";
-        }
-        if (selection == 1) {
-            return "/HumanFoodAssets/FoodPizza.png";
-        }
-        return "/HumanFoodAssets/FoodBurger.png";
     }
 
     private Image loadImage(String imagePath) {
