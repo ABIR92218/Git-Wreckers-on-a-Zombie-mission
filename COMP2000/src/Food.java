@@ -1,8 +1,5 @@
 import java.awt.Graphics2D;
 import java.awt.Image;
-import java.io.File;
-import java.net.URL;
-import javax.swing.ImageIcon;
 
 /**
  * A stationary food supply that can restore a human's energy.
@@ -76,20 +73,4 @@ public class Food extends Entity implements Edible {
         graphics.drawImage(image, left, top, FOOD_SIZE, FOOD_SIZE, null);
     }
 
-    private Image loadImage(String imagePath) {
-        URL imageUrl = Food.class.getResource(imagePath);
-        if (imageUrl != null) {
-            return new ImageIcon(imageUrl).getImage();
-        }
-
-        String fileName = imagePath.substring(1);
-        File sourceAsset = new File("src", fileName);
-        if (!sourceAsset.isFile()) {
-            sourceAsset = new File("COMP2000/src", fileName);
-        }
-        if (!sourceAsset.isFile()) {
-            throw new IllegalStateException(imagePath + " was not found");
-        }
-        return new ImageIcon(sourceAsset.getAbsolutePath()).getImage();
-    }
 }

@@ -1,11 +1,8 @@
 import java.awt.Graphics2D;
 import java.awt.Image;
-import java.io.File;
-import java.net.URL;
 import java.util.Comparator;
 import java.util.Random;
 import java.util.function.Predicate;
-import javax.swing.ImageIcon;
 
 /**
  * A person who expends energy, eats food, and can temporarily shelter inside a
@@ -337,25 +334,6 @@ public class Human extends Entity {
                 Math.min(world.getHeight() - CHARACTER_HEIGHT / 2.0, nextY));
         setPosition(nextX, nextY);
         advanceWalkAnimation();
-    }
-
-    private Image loadImage(String imagePath) {
-        URL imageUrl = Human.class.getResource(imagePath);
-        if (imageUrl != null) {
-            return new ImageIcon(imageUrl).getImage();
-        }
-
-        // When Java is run with only the generated out directory on its
-        // classpath, image assets remain in src rather than being duplicated.
-        String fileName = imagePath.startsWith("/") ? imagePath.substring(1) : imagePath;
-        File sourceAsset = new File("src", fileName);
-        if (!sourceAsset.isFile()) {
-            sourceAsset = new File("COMP2000/src", fileName);
-        }
-        if (!sourceAsset.isFile()) {
-            throw new IllegalStateException(imagePath + " was not found");
-        }
-        return new ImageIcon(sourceAsset.getAbsolutePath()).getImage();
     }
 
     private void advanceWalkAnimation() {
