@@ -14,12 +14,19 @@ import javax.swing.ImageIcon;
 public class Food extends Entity implements Edible {
 
     public static final double EAT_DISTANCE = 16.0;
+    // Used by the no-energy-argument constructor below for ordinary drops.
+    public static final double DEFAULT_ENERGY_VALUE = 30.0;
     private static final int FOOD_SIZE = 28;
     // Food expires after 300 simulation updates.
     private static final int LIFETIME_TICKS = 300;
     private final double energyValue;
     private final Image image;
     private int ageInTicks;
+
+    /** Convenience overload for ordinary food drops that don't need a custom energy value. */
+    public Food(double x, double y) {
+        this(x, y, DEFAULT_ENERGY_VALUE);
+    }
 
     public Food(double x, double y, double energyValue) {
         super(x, y);

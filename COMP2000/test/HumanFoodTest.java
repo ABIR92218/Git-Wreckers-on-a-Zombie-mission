@@ -13,7 +13,17 @@ public final class HumanFoodTest {
         testStarvationDeactivatesHuman();
         testSimulationAssetsLoadWithoutSourceClasspath();
         testFoodIsEdible();
+        testFoodConstructorOverloadUsesDefaultEnergy();
         System.out.println("HumanFoodTest passed");
+    }
+
+    /** The two-argument constructor overload should default to DEFAULT_ENERGY_VALUE. */
+    private static void testFoodConstructorOverloadUsesDefaultEnergy() {
+        Food defaultEnergyFood = new Food(10, 10);
+        Food customEnergyFood = new Food(10, 10, 99);
+
+        assert defaultEnergyFood.getEnergyValue() == Food.DEFAULT_ENERGY_VALUE;
+        assert customEnergyFood.getEnergyValue() == 99;
     }
 
     /** Food implements the Edible contract independently of its Entity behaviour. */
