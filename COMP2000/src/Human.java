@@ -261,13 +261,19 @@ public class Human extends Entity {
                 ));
     }
 
+    /**
+     * Reuses the same bounded generic finder as findNearestFood, rather than
+     * a separate instanceof-and-cast stream, so both searches work the same
+     * way. Double.MAX_VALUE keeps the previous whole-world search range
+     * (shelter-seeking isn't limited to FOOD_SEARCH_RADIUS).
+     */
     private Building findNearestAvailableBuilding(World world) {
-        return world.getEntities().stream()
-                .filter(entity -> entity instanceof Building)
-                .map(entity -> (Building) entity)
-                .filter(building -> building.canEnter(this))
-                .min(Comparator.comparingDouble(this::distanceTo))
-                .orElse(null);
+        try {
+            return findNearestEntity(world, Double.MAX_VALUE, Building.class,
+                    building -> building.canEnter(this));
+        } catch (TargetNotFoundException exception) {
+            return null;
+        }
     }
 
     private double distanceTo(double targetX, double targetY) {
