@@ -14,7 +14,30 @@ public final class HumanFoodTest {
         testSimulationAssetsLoadWithoutSourceClasspath();
         testFoodIsEdible();
         testFoodConstructorOverloadUsesDefaultEnergy();
+        testFoodStrategiesPickDifferentFood();
         System.out.println("HumanFoodTest passed");
+    }
+
+    /**
+     * Strategy pattern: swapping a human's FoodSelectionStrategy at runtime
+     * changes which food it picks, without changing Human itself - mirrors
+     * the course's RubberDuck.setFlyBehavior() example.
+     */
+    private static void testFoodStrategiesPickDifferentFood() {
+        World world = new World(1000, 1000);
+        Human human = new Human(100, 100);
+        Food closerLowValue = new Food(110, 100, 5);
+        Food fartherHighValue = new Food(200, 100, 90);
+        world.addEntity(human);
+        world.addEntity(closerLowValue);
+        world.addEntity(fartherHighValue);
+
+        assert new NearestFoodStrategy().selectFood(world, human, 250).get() == closerLowValue;
+        assert new HighestValueFoodStrategy().selectFood(world, human, 250).get()
+                == fartherHighValue;
+
+        human.setFoodStrategy(new HighestValueFoodStrategy());
+        assert human.getFoodStrategy().selectFood(world, human, 250).get() == fartherHighValue;
     }
 
     /** The two-argument constructor overload should default to DEFAULT_ENERGY_VALUE. */

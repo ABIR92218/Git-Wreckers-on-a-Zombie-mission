@@ -4,6 +4,7 @@ import java.io.File;
 import java.net.URL;
 import java.util.Comparator;
 import java.util.Random;
+import java.util.function.Predicate;
 import javax.swing.ImageIcon;
 
 /**
@@ -41,9 +42,19 @@ public class Human extends Entity {
     private boolean moving;
     private boolean hidden;
     private Building shelter;
+    // Strategy pattern: how this human picks which food to go for is
+    // swappable, independently of everything else about it (composition
+    // over inheritance - see FoodSelectionStrategy).
+    private FoodSelectionStrategy foodStrategy = new NearestFoodStrategy();
 
     public Human(double x, double y) {
         this(x, y, DEFAULT_SPRITE_FOLDER);
+    }
+
+    /** Creates a human that uses a non-default strategy for choosing food. */
+    public Human(double x, double y, FoodSelectionStrategy foodStrategy) {
+        this(x, y, DEFAULT_SPRITE_FOLDER);
+        this.foodStrategy = foodStrategy;
     }
 
     /**
@@ -85,6 +96,16 @@ public class Human extends Entity {
     /** Returns the building currently sheltering this human, if any. */
     public Building getShelter() {
         return shelter;
+    }
+
+    /** Returns the strategy currently used to pick which food to go for. */
+    public FoodSelectionStrategy getFoodStrategy() {
+        return foodStrategy;
+    }
+
+    /** Swaps the food-selection strategy at runtime, e.g. after a scripted event. */
+    public void setFoodStrategy(FoodSelectionStrategy foodStrategy) {
+        this.foodStrategy = foodStrategy;
     }
 
     /**
@@ -215,16 +236,25 @@ public class Human extends Entity {
     }
 
     private Food findNearestFood(World world) throws TargetNotFoundException {
-        return findNearestEntity(world, FOOD_SEARCH_RADIUS, Food.class);
+        return foodStrategy.selectFood(world, this, FOOD_SEARCH_RADIUS)
+                .orElseThrow(() -> new TargetNotFoundException("No nearby Food target found"));
     }
 
-    private <T extends Entity> T findNearestEntity(World world,
-                                                   double radius,
-                                                   Class<T> entityType)
+    /**
+     * Bounded-generic nearest-entity-of-type finder, package-private so the
+     * {@link FoodSelectionStrategy} implementations in this package (e.g.
+     * {@link NearestFoodStrategy}) can reuse it instead of duplicating the
+     * same search.
+     */
+    <T extends Entity> T findNearestEntity(World world,
+                                            double radius,
+                                            Class<T> entityType,
+                                            Predicate<T> filter)
             throws TargetNotFoundException {
         return world.getNearby(this, radius).stream()
                 .filter(entityType::isInstance)
                 .map(entityType::cast)
+                .filter(filter)
                 .min(Comparator.comparingDouble(this::distanceTo))
                 .orElseThrow(() -> new TargetNotFoundException(
                         "No nearby " + entityType.getSimpleName() + " target found"
