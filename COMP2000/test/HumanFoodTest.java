@@ -12,7 +12,21 @@ public final class HumanFoodTest {
         testHumanEntersAndLeavesBuilding();
         testStarvationDeactivatesHuman();
         testSimulationAssetsLoadWithoutSourceClasspath();
+        testFoodIsEdible();
         System.out.println("HumanFoodTest passed");
+    }
+
+    /** Food implements the Edible contract independently of its Entity behaviour. */
+    private static void testFoodIsEdible() {
+        Edible food = new Food(0, 0, 20);
+
+        assert food.getEnergyValue() == 20;
+        assert !food.isConsumed();
+        assert food.describeEnergy().contains("20.0");
+
+        food.consume();
+        assert food.isConsumed();
+        assert food.describeEnergy().equals("already consumed");
     }
 
     private static void testEnergyDecreasesAfterUpdate() {

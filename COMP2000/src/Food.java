@@ -4,8 +4,14 @@ import java.io.File;
 import java.net.URL;
 import javax.swing.ImageIcon;
 
-/** A stationary food supply that can restore a human's energy. */
-public class Food extends Entity {
+/**
+ * A stationary food supply that can restore a human's energy.
+ *
+ * <p>Extends {@link Entity} because it exists in the world (has a position,
+ * can be drawn, can be deactivated) and implements {@link Edible} because
+ * it can be eaten - two separate contracts for two separate concerns.
+ */
+public class Food extends Entity implements Edible {
 
     public static final double EAT_DISTANCE = 16.0;
     private static final int FOOD_SIZE = 28;
@@ -24,16 +30,19 @@ public class Food extends Entity {
         this.image = loadImage(selectImagePath(x, y));
     }
 
+    @Override
     public double getEnergyValue() {
         return energyValue;
     }
 
     /** Returns true once a human has consumed this food item. */
+    @Override
     public boolean isConsumed() {
         return !isActive();
     }
 
     /** Marks this food as consumed so World removes it after the tick. */
+    @Override
     public void consume() {
         deactivate();
     }
