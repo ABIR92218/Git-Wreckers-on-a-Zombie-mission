@@ -8,7 +8,8 @@ import java.util.stream.Collectors;
  * separate from {@link World} / {@code WorldStatistics} (the team's own
  * observer-driven reporting) so this stays a self-contained demonstration of
  * the Week 11 Collectors covered in the study guide: groupingBy,
- * partitioningBy, summarizingDouble, toMap, and downstream collectors.
+ * partitioningBy, summarizingDouble, and downstream collectors such as
+ * counting, summingDouble and averagingDouble.
  */
 public final class HumanFoodStatistics {
 
