@@ -16,6 +16,7 @@ public final class HumanFoodTest {
         testFoodConstructorOverloadUsesDefaultEnergy();
         testFoodStrategiesPickDifferentFood();
         testHumanFoodStatisticsCollectors();
+        testAverageEnergyByStrategy();
         testParallelStatisticsMatchSequential();
         testRandomStrategyProducesVariety();
         System.out.println("HumanFoodTest passed");
@@ -69,6 +70,21 @@ public final class HumanFoodTest {
         java.util.Map<FoodType, Double> energyByType =
                 HumanFoodStatistics.totalEnergyByFoodType(food);
         assert energyByType.get(apple.getType()) == 25.0;
+    }
+
+    /** averageEnergyByStrategy should report each strategy's own humans' average energy. */
+    private static void testAverageEnergyByStrategy() {
+        Human nearestA = new Human(0, 0, new NearestFoodStrategy());
+        Human nearestB = new Human(0, 0, new NearestFoodStrategy());
+        Human highestValue = new Human(0, 0, new HighestValueFoodStrategy());
+        nearestB.restoreEnergy(5); // pushes against MAX_ENERGY, so the average stays exactly 100
+        java.util.List<Human> humans = java.util.List.of(nearestA, nearestB, highestValue);
+
+        java.util.Map<String, Double> averages = HumanFoodStatistics.averageEnergyByStrategy(humans);
+
+        assert averages.size() == 2;
+        assert averages.get("NearestFoodStrategy") == 100.0;
+        assert averages.get("HighestValueFoodStrategy") == 100.0;
     }
 
     /**

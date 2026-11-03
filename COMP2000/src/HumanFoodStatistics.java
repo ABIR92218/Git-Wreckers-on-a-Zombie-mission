@@ -42,17 +42,17 @@ public final class HumanFoodStatistics {
     }
 
     /**
-     * One entry per food-selection strategy class name to the humans using
-     * it, e.g. {"NearestFoodStrategy"=[...], "HighestValueFoodStrategy"=[...]}.
-     * Uses the mapping downstream collector to keep only names, not whole
-     * Human objects, in each group.
+     * Average energy of the humans using each food-selection strategy, e.g.
+     * {"NearestFoodStrategy"=62.4, "HighestValueFoodStrategy"=48.1}. This is
+     * the figure that actually answers "which food strategy is working out
+     * best right now" - higher average energy means that strategy's humans
+     * are feeding themselves more effectively.
      */
-    public static Map<String, List<String>> strategyAssignments(List<Human> humans) {
+    public static Map<String, Double> averageEnergyByStrategy(List<Human> humans) {
         return humans.stream()
                 .collect(Collectors.groupingBy(
                         human -> human.getFoodStrategy().getClass().getSimpleName(),
-                        Collectors.mapping(human -> Integer.toHexString(human.hashCode()),
-                                Collectors.toList())));
+                        Collectors.averagingDouble(Human::getEnergy)));
     }
 
     /**
