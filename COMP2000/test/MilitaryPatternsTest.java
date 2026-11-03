@@ -398,8 +398,12 @@ public final class MilitaryPatternsTest {
         World world = new World(1000, 750);
         Military closer = new Military(200, 300);
         Military farther = new Military(260, 300);
-        Zombie first = new Zombie(200, 500);
-        Zombie second = new Zombie(330, 500);
+        // Kept within Military's 156px detection radius (shortened from 260
+        // as part of the zombie-pressure tuning) while preserving the same
+        // relative distances: both soldiers are nearer to "first" than to
+        // "second", and "farther" can still see both zombies.
+        Zombie first = new Zombie(200, 420);
+        Zombie second = new Zombie(330, 420);
         world.addEntity(closer);
         world.addEntity(farther);
         world.addEntity(first);
