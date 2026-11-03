@@ -6,6 +6,7 @@ import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
 import javax.swing.*;
@@ -304,7 +305,7 @@ public class SimPanel extends JPanel implements WorldObserver {
             BattleReport battle = BattleReport.of(world.getEntities());
 
             graphics2D.setColor(new Color(0, 0, 0, 170));
-            graphics2D.fillRoundRect(15, 15, 220, 156, 12, 12);
+            graphics2D.fillRoundRect(15, 15, 220, 196, 12, 12);
 
             graphics2D.setColor(Color.WHITE);
             graphics2D.drawString("Tick: " + statistics.getTick(), 25, 38);
@@ -319,6 +320,23 @@ public class SimPanel extends JPanel implements WorldObserver {
             graphics2D.drawString("Kills: " + battle.getTotalKills(), 25, 118);
             graphics2D.drawString("Best: " + battle.getBestKills(), 115, 118);
             graphics2D.drawString("Trap catches: " + trapReport.getCatches(), 25, 138);
+
+            // Two of HumanFoodStatistics' Collector-based figures, shown live
+            // rather than only being exercised by tests.
+            Map<Boolean, Long> shelterCounts =
+                    HumanFoodStatistics.countByShelterStatus(findEntities(Human.class));
+            graphics2D.drawString(
+                    "Sheltered: " + shelterCounts.getOrDefault(true, 0L)
+                            + "  Exposed: " + shelterCounts.getOrDefault(false, 0L),
+                    25, 158);
+
+            Map<FoodType, Long> foodByType =
+                    HumanFoodStatistics.countByFoodType(findEntities(Food.class));
+            graphics2D.drawString(
+                    "Apple: " + foodByType.getOrDefault(FoodType.APPLE, 0L)
+                            + " Pizza: " + foodByType.getOrDefault(FoodType.PIZZA, 0L)
+                            + " Burger: " + foodByType.getOrDefault(FoodType.BURGER, 0L),
+                    25, 178);
 
         } finally {
             graphics2D.dispose();
